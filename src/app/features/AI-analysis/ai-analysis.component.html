@@ -1,0 +1,320 @@
+<!-- BREADCRUMB -->
+<div class="breadcrumb-bar">
+  <div class="breadcrumb-inner">
+    🏠 <a routerLink="/">Trang chủ</a>
+    <span>›</span>
+    <a routerLink="/test">Đề thi số 1</a>
+    <span>›</span>
+    <span class="bc-cur">AI Phân tích kết quả</span>
+  </div>
+</div>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="hero-blob"></div>
+  <div class="hero-blob2"></div>
+  <div class="page-hero-inner fade-up">
+    <div class="hero-badge">
+      <div class="hero-badge-dot"></div>
+      AI Phân tích · Cá nhân hóa theo bài làm của bạn
+    </div>
+    <h1>Phân tích <span>Điểm Yếu</span> &amp; Lộ trình<br/>Cải thiện Thông minh</h1>
+    <p>
+      Dựa trên kết quả bài thi vừa nộp, AI đã xác định các lỗi sai, phân loại theo
+      chủ điểm ngữ pháp và đề xuất lộ trình ôn luyện cá nhân hóa phù hợp với bạn.
+    </p>
+    <div class="hero-score-row">
+      <div class="hsr-item">
+        <div class="hsr-num correct">{{ examResult.correct }}</div>
+        <div class="hsr-label">Câu đúng</div>
+      </div>
+      <div class="hsr-sep"></div>
+      <div class="hsr-item">
+        <div class="hsr-num wrong">{{ examResult.wrong }}</div>
+        <div class="hsr-label">Câu sai</div>
+      </div>
+      <div class="hsr-sep"></div>
+      <div class="hsr-item">
+        <div class="hsr-num skip">{{ examResult.skip }}</div>
+        <div class="hsr-label">Bỏ qua</div>
+      </div>
+      <div class="hsr-sep"></div>
+      <div class="hsr-item">
+        <div class="hsr-num total-score">{{ examResult.score }}<span>/10</span></div>
+        <div class="hsr-label">Điểm số</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="page-main">
+  <div class="two-col-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <div class="sidebar-panel fade-up">
+        <div class="panel-title">🤖 Trạng thái AI</div>
+        <div class="ai-status-block" [ngClass]="aiStatusClass">
+          <div class="ai-status-icon">{{ aiStatusIcon }}</div>
+          <div class="ai-status-body">
+            <div class="ai-status-label">{{ aiStatusLabel }}</div>
+            <div class="ai-status-sub">{{ aiStatusSub }}</div>
+          </div>
+        </div>
+        @if (isStreaming || isLoading) {
+          <div class="ai-progress-bar">
+            <div class="ai-progress-fill" [style.width.%]="streamProgress"></div>
+          </div>
+        }
+      </div>
+
+      <div class="sidebar-panel fade-up d1">
+        <div class="panel-title">📊 Điểm theo kỹ năng</div>
+        <div class="skill-list">
+          @for (skill of skillSummary; track skill.name) {
+            <div class="skill-row">
+              <div class="skill-row-top">
+                <span class="skill-row-name">{{ skill.emoji }} {{ skill.name }}</span>
+                <span class="skill-row-pct" [ngClass]="getPctColor(skill.pct)">{{ skill.pct }}%</span>
+              </div>
+              <div class="skill-row-bar">
+                <div class="skill-row-fill" [style.width.%]="skill.pct" [ngClass]="getBarColor(skill.pct)"></div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="sidebar-panel fade-up d2">
+        <div class="panel-title">🔥 Ưu tiên ôn luyện</div>
+        @for (p of priorityTopics; track p.name; let i = $index) {
+          <div class="priority-item">
+            <div class="prio-rank" [ngClass]="'rank-p' + (i + 1)">{{ i + 1 }}</div>
+            <div class="prio-body">
+              <div class="prio-name">{{ p.name }}</div>
+              <div class="prio-count">{{ p.wrongCount }} lỗi sai</div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="sidebar-panel fade-up d2">
+        <div class="panel-title">⚡ Thao tác nhanh</div>
+        <div class="qa-list">
+          <button class="qa-btn qa-retake" (click)="retakeExam()">🔄 Làm lại đề thi</button>
+          <button class="qa-btn qa-exercises" (click)="goToExercises()">📚 Xem bài tập</button>
+          <button class="qa-btn qa-new" (click)="tryNewExam()">📋 Thử đề mới</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+      <!-- LOADING STATE -->
+      @if (isLoading) {
+        <div class="loading-card fade-up">
+          <div class="lc-spinner">
+            <div class="lc-ring"></div>
+            <div class="lc-core">🤖</div>
+          </div>
+          <div class="lc-title">AI đang phân tích bài làm của bạn...</div>
+          <div class="lc-steps">
+            @for (step of loadingSteps; track step; let i = $index) {
+              <div class="lcs-item"
+                   [class.done]="currentLoadStep > i"
+                   [class.active]="currentLoadStep === i">
+                <span class="lcs-icon">{{ currentLoadStep > i ? '✅' : (currentLoadStep === i ? '⏳' : '○') }}</span>
+                <span class="lcs-text">{{ step }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      }
+
+      <!-- STREAMING: show partial text while AI writes -->
+      @if (isStreaming && streamingText) {
+        <div class="streaming-card fade-up">
+          <div class="stc-header">
+            <div class="stc-dot-wrap">
+              <span class="stc-dot"></span><span class="stc-dot"></span><span class="stc-dot"></span>
+            </div>
+            <span class="stc-label">AI đang viết phân tích...</span>
+          </div>
+          <div class="stc-text">{{ streamingText }}<span class="stc-cursor">|</span></div>
+        </div>
+      }
+
+      <!-- FULL ANALYSIS RESULT -->
+      @if (!isLoading && analysisResult) {
+
+        <!-- AI OVERALL COMMENT -->
+        <div class="ai-comment-card fade-up">
+          <div class="acc-header">
+            <div class="acc-avatar">🤖</div>
+            <div class="acc-meta">
+              <div class="acc-title">Nhận xét từ AI Giáo viên TaO10</div>
+              <div class="acc-sub">Phân tích {{ examResult.wrong + examResult.skip }} lỗi · Vừa hoàn thành</div>
+            </div>
+            <div class="acc-grade" [ngClass]="gradeClass">{{ gradeLabel }}</div>
+          </div>
+          <div class="acc-text">{{ analysisResult.overallComment }}</div>
+          <div class="acc-tags">
+            @for (s of analysisResult.strongPoints; track s) {
+              <span class="acc-tag acc-strong">✅ {{ s }}</span>
+            }
+            @for (w of analysisResult.weakPoints; track w) {
+              <span class="acc-tag acc-weak">⚠️ {{ w }}</span>
+            }
+          </div>
+        </div>
+
+        <!-- WRONG QUESTIONS -->
+        <div class="section-title-row fade-up">
+          <h2 class="section-title">❌ Phân tích <span>từng câu sai</span></h2>
+          <span class="tag-count">{{ analysisResult.wrongDetails.length }} câu cần xem lại</span>
+        </div>
+
+        <div class="wrong-list fade-up">
+          @for (wq of analysisResult.wrongDetails; track wq.qNum) {
+            <div class="wrong-item" [class.expanded]="expandedQ === wq.qNum">
+              <div class="wi-header" (click)="toggleExpand(wq.qNum)">
+                <div class="wi-qnum">{{ wq.qNum }}</div>
+                <div class="wi-body">
+                  <div class="wi-tags-row">
+                    <span class="wi-topic-tag">{{ wq.topic }}</span>
+                    <span class="wi-diff" [ngClass]="'diff-' + wq.difficulty">{{ wq.difficultyLabel }}</span>
+                    @if (!wq.userAnswer) {
+                      <span class="wi-skip-tag">Bỏ qua</span>
+                    }
+                  </div>
+                  <div class="wi-question">{{ wq.questionSummary }}</div>
+                  <div class="wi-ans-row">
+                    @if (wq.userAnswer) {
+                      <span class="wi-ans-wrong">Bạn chọn: <strong>{{ wq.userAnswer }}</strong></span>
+                    } @else {
+                      <span class="wi-ans-skip">Bỏ qua câu này</span>
+                    }
+                    <span class="wi-ans-correct">Đáp án đúng: <strong>{{ wq.correctAnswer }}</strong></span>
+                  </div>
+                </div>
+                <div class="wi-chevron">{{ expandedQ === wq.qNum ? '▲' : '▼' }}</div>
+              </div>
+
+              @if (expandedQ === wq.qNum) {
+                <div class="wi-detail">
+                  <div class="wi-ai-box">
+                    <div class="wiab-label">🤖 AI phân tích lỗi:</div>
+                    <div class="wiab-text">{{ wq.aiAnalysis }}</div>
+                  </div>
+                  <div class="wi-rule-box">
+                    <div class="wirb-label">📌 Quy tắc cần nhớ:</div>
+                    <div class="wirb-text">{{ wq.grammarRule }}</div>
+                  </div>
+                  @if (wq.examples && wq.examples.length > 0) {
+                    <div class="wi-examples">
+                      <div class="wie-label">💡 Ví dụ minh họa:</div>
+                      @for (ex of wq.examples; track ex.en) {
+                        <div class="wie-item">
+                          <div class="wie-en">{{ ex.en }}</div>
+                          <div class="wie-vi">→ {{ ex.vi }}</div>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <!-- EXERCISE RECOMMENDATIONS -->
+        <div class="section-title-row fade-up" style="margin-top: 40px">
+          <h2 class="section-title">🎯 Bài tập AI <span>gợi ý</span></h2>
+          <span class="tag-count">Cá nhân hóa theo lỗi của bạn</span>
+        </div>
+
+        <div class="exercise-cards fade-up">
+          @for (ex of analysisResult.exercises; track ex.title) {
+            <div class="ex-card" [ngClass]="'ex-' + ex.color">
+              <div class="exc-cover">
+                <span class="exc-emoji">{{ ex.emoji }}</span>
+                <span class="exc-badge">{{ ex.type }}</span>
+              </div>
+              <div class="exc-body">
+                <div class="exc-topic">{{ ex.topic }}</div>
+                <div class="exc-title">{{ ex.title }}</div>
+                <div class="exc-desc">{{ ex.description }}</div>
+                <div class="exc-meta">
+                  <span>⏱ {{ ex.duration }}</span>
+                  <span>📝 {{ ex.questionCount }} câu</span>
+                  <span class="exc-level" [ngClass]="'level-' + ex.level">{{ ex.levelLabel }}</span>
+                </div>
+                <div class="exc-tags">
+                  @for (t of ex.grammarPoints; track t) {
+                    <span class="exc-tag">{{ t }}</span>
+                  }
+                </div>
+              </div>
+              <div class="exc-footer">
+                <button class="exc-start">Luyện tập ngay →</button>
+                <button class="exc-save">🔖</button>
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- STUDY PLAN -->
+        <div class="section-title-row fade-up" style="margin-top: 40px">
+          <h2 class="section-title">📅 Lộ trình <span>ôn tập đề xuất</span></h2>
+        </div>
+
+        <div class="study-plan fade-up">
+          @for (week of analysisResult.studyPlan; track week.title; let i = $index) {
+            <div class="sp-week">
+              <div class="sp-week-head">
+                <div class="sp-week-num">Tuần {{ i + 1 }}</div>
+                <div class="sp-week-title">{{ week.title }}</div>
+                <div class="sp-week-focus">{{ week.focus }}</div>
+              </div>
+              <div class="sp-tasks">
+                @for (task of week.tasks; track task.text) {
+                  <div class="spt">
+                    <span class="spt-icon">{{ task.icon }}</span>
+                    <span class="spt-text">{{ task.text }}</span>
+                    <span class="spt-time">{{ task.time }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-section fade-up">
+          <div class="cta-emoji">🚀</div>
+          <h2>Sẵn sàng cải thiện điểm số?</h2>
+          <p>Sau khi ôn luyện theo lộ trình trên, hãy làm lại bài thi để đo mức độ tiến bộ!</p>
+          <div class="cta-btns">
+            <button class="btn-cta-primary" (click)="retakeExam()">🔄 Làm lại đề số 1</button>
+            <button class="btn-cta-outline" (click)="tryNewExam()">📋 Thử đề thi mới</button>
+          </div>
+          <div class="cta-note">✅ Phân tích miễn phí &nbsp;·&nbsp; ✅ Cá nhân hóa 100% &nbsp;·&nbsp; ✅ AI cập nhật theo tiến độ</div>
+        </div>
+      }
+
+      <!-- ERROR STATE -->
+      @if (!isLoading && !analysisResult && hasError) {
+        <div class="error-card fade-up">
+          <div class="err-icon">😕</div>
+          <div class="err-title">Không thể kết nối AI</div>
+          <div class="err-desc">{{ errorMessage }}</div>
+          <button class="err-retry" (click)="retryAnalysis()">🔄 Thử lại</button>
+        </div>
+      }
+
+    </div>
+  </div>
+</div>

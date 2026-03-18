@@ -1,0 +1,87 @@
+import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { NgClass } from '@angular/common';
+
+@Component({
+  selector: 'app-home',
+  standalone: true,
+  imports: [RouterLink, NgClass],
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.scss',
+})
+export class HomeComponent {
+  examCards = [
+    { id: 1, title: 'Đề thi thử tổng hợp vào lớp 10 – Bộ đề số 1 năm 2026', questions: 50, duration: 60, views: '42.8k lượt', progress: 0, difficulty: 'Khó', difficultyClass: 'diff-hard', action: 'Làm bài →', cover: 'cover-blue', tag: '🔥 Hot', tagClass: 'tag-hot' },
+    { id: 2, title: 'Đề thi thử tổng hợp vào lớp 10 – Bộ đề số 2 năm 2026', questions: 50, duration: 60, views: '36.1k lượt', progress: 60, difficulty: 'Khó', difficultyClass: 'diff-hard', action: 'Tiếp tục →', cover: 'cover-sky', tag: '✨ Mới', tagClass: 'tag-new' },
+    { id: 3, title: 'Đề thi thử tổng hợp vào lớp 10 – Bộ đề số 3 năm 2026', questions: 50, duration: 60, views: '29.4k lượt', progress: 100, difficulty: 'Trung bình', difficultyClass: 'diff-medium', action: 'Xem KQ →', cover: 'cover-teal', tag: 'Miễn phí', tagClass: 'tag-free' },
+    { id: 4, title: 'Đề thi thử tổng hợp vào lớp 10 – Bộ đề số 4 năm 2026', questions: 50, duration: 60, views: '24.7k lượt', progress: 0, difficulty: 'Trung bình', difficultyClass: 'diff-medium', action: 'Làm bài →', cover: 'cover-indigo', tag: '🔥 Hot', tagClass: 'tag-hot' },
+    { id: 5, title: 'Đề thi thử tổng hợp vào lớp 10 – Bộ đề số 5 năm 2026', questions: 50, duration: 60, views: '19.3k lượt', progress: 35, difficulty: 'Dễ', difficultyClass: 'diff-easy', action: 'Tiếp tục →', cover: 'cover-emerald', tag: '✨ Mới', tagClass: 'tag-new' },
+    { id: 6, title: 'Đề thi thử tổng hợp vào lớp 10 – Bộ đề số 6 năm 2026', questions: 50, duration: 60, views: '15.6k lượt', progress: 0, difficulty: 'Dễ', difficultyClass: 'diff-easy', action: 'Làm bài →', cover: 'cover-violet', tag: 'Miễn phí', tagClass: 'tag-free' },
+  ];
+  topics = [
+    { name: 'Thì động từ', count: '12 chủ điểm · 240 bài', emoji: '⏰' },
+    { name: 'Câu bị động', count: '8 chủ điểm · 160 bài', emoji: '🔄' },
+    { name: 'Câu gián tiếp', count: '6 chủ điểm · 120 bài', emoji: '💬' },
+    { name: 'Câu điều kiện', count: '4 chủ điểm · 80 bài', emoji: '❓' },
+    { name: 'Mệnh đề quan hệ', count: '5 chủ điểm · 100 bài', emoji: '📖' },
+    { name: 'Liên từ & Giới từ', count: '9 chủ điểm · 180 bài', emoji: '🔗' },
+    { name: 'Từ loại & Cấu tạo từ', count: '10 chủ điểm · 200 bài', emoji: '📝' },
+    { name: 'Kỹ năng đọc hiểu', count: '15 chủ điểm · 300 bài', emoji: '🗣️' },
+  ];
+
+  blogItems = [
+    {
+      title: 'Cấu trúc đề thi Tiếng Anh vào lớp 10 năm 2026 – Những thay đổi quan trọng cần biết',
+      meta: '📅 15/03/2026 · ⏱ 5 phút đọc · 👁 8.2k lượt xem',
+      emoji: '📰',
+      thumbClass: 'blog-thumb-sky',
+    },
+    {
+      title: '10 mẹo làm bài thi Tiếng Anh đạt điểm cao cho học sinh lớp 9',
+      meta: '📅 12/03/2026 · ⏱ 7 phút đọc · 👁 6.5k lượt xem',
+      emoji: '💡',
+      thumbClass: 'blog-thumb-amber',
+    },
+    {
+      title: 'Tổng hợp đề thi ôn luyện thành phố Hà Nội năm học 2023-2025',
+      meta: '📅 10/03/2026 · ⏱ 3 phút đọc · 👁 14k lượt xem',
+      emoji: '📚',
+      thumbClass: 'blog-thumb-green',
+    },
+    {
+      title: 'Lộ trình ôn tập hiệu quả 3 tháng trước kỳ thi tuyển sinh lớp 10',
+      meta: '📅 08/03/2026 · ⏱ 6 phút đọc · 👁 10.8k lượt xem',
+      emoji: '🎯',
+      thumbClass: 'blog-thumb-purple',
+    },
+  ];
+
+  leaderboard = [
+    { rank: '🥇', rankClass: 'rank-1', name: 'Nguyễn Minh Anh', score: 'Hà Nội · 48 bài', points: '9,850', initial: 'N', avatarBg: 'linear-gradient(135deg,#0ea5e9,#38bdf8)' },
+    { rank: '🥈', rankClass: 'rank-2', name: 'Trần Thị Lan', score: 'TP.HCM · 45 bài', points: '9,420', initial: 'T', avatarBg: 'linear-gradient(135deg,#10b981,#34d399)' },
+    { rank: '🥉', rankClass: 'rank-3', name: 'Lê Hoàng Nam', score: 'Đà Nẵng · 42 bài', points: '9,110', initial: 'L', avatarBg: 'linear-gradient(135deg,#f59e0b,#fcd34d)' },
+    { rank: '4', rankClass: 'rank-other', name: 'Phạm Thu Hà', score: 'Huế · 38 bài', points: '8,760', initial: 'P', avatarBg: 'linear-gradient(135deg,#8b5cf6,#a78bfa)' },
+    { rank: '5', rankClass: 'rank-other', name: 'Vũ Đức Hùng', score: 'Hải Phòng · 36 bài', points: '8,300', initial: 'V', avatarBg: 'linear-gradient(135deg,#ec4899,#f9a8d4)' },
+  ];
+
+  schedule = [
+    { day: '20', month: 'T5/26', title: 'Thi thử toàn quốc đợt 1', time: '⏰ 8:00 – 10:00 sáng', bgClass: 'schedule-sky' },
+    { day: '05', month: 'T6/26', title: 'Thi thử TP.Hà Nội 2026', time: '⏰ 14:00 – 16:00 chiều', bgClass: 'schedule-amber' },
+    { day: '05', month: 'T7/26', title: 'Kỳ thi chính thức Hà Nội', time: '⏰ 7:30 – 9:30 sáng', bgClass: 'schedule-green' },
+  ];
+
+  features = [
+    { icon: '🤖', title: 'AI Phân tích điểm yếu', desc: 'Hệ thống AI thông minh phân tích kết quả và đề xuất chủ điểm cần cải thiện phù hợp với từng học sinh.' },
+    { icon: '⏱️', title: 'Mô phỏng thi thật', desc: 'Giao diện thi giống hệt phòng thi thực tế, đếm ngược thời gian chính xác từng giây.' },
+    { icon: '📊', title: 'Báo cáo chi tiết', desc: 'Theo dõi tiến độ học tập qua biểu đồ trực quan, thống kê từng loại câu hỏi và chủ điểm.' },
+    { icon: '💬', title: 'Giải thích từng câu', desc: 'Mỗi đáp án đều có giải thích chi tiết, ví dụ minh họa và kiến thức ngữ pháp liên quan.' },
+    { icon: '📱', title: 'Học mọi thiết bị', desc: 'Tương thích hoàn hảo trên điện thoại, máy tính bảng và máy tính. Học offline dễ dàng.' },
+    { icon: '👥', title: 'Cộng đồng học tập', desc: 'Đặt câu hỏi, chia sẻ tài liệu và giao lưu với hàng triệu học sinh trên toàn quốc.' },
+  ];
+
+  testimonials = [
+    { text: 'Nhờ TaO10 mình đã tăng từ 6.5 lên 9.0 trong kỳ thi thật! Hệ thống đề thi rất đầy đủ, giải thích chi tiết và dễ hiểu.', name: 'Nguyễn Minh Châu', meta: 'Học sinh lớp 9 – Hà Nội', initial: 'M', avatarBg: 'linear-gradient(135deg,#0ea5e9,#7dd3fc)' },
+    { text: 'Website có giao diện đẹp, dễ dùng. Mình thích nhất tính năng thi thử mô phỏng phòng thi thực tế, giúp mình bớt hồi hộp khi thi thật.', name: 'Trần Bảo Trân', meta: 'Học sinh lớp 9 – TP.HCM', initial: 'T', avatarBg: 'linear-gradient(135deg,#10b981,#34d399)' },
+    { text: 'Bộ chuyên đề ngữ pháp rất có hệ thống. Mình ôn trong 2 tháng và đạt 8.5 điểm thi vào lớp 10 chuyên Anh!', name: 'Lê Khánh Huyền', meta: 'Học sinh lớp 9 – Đà Nẵng', initial: 'H', avatarBg: 'linear-gradient(135deg,#8b5cf6,#a78bfa)' },
+  ];
+}

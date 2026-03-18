@@ -1,0 +1,229 @@
+<div class="breadcrumb-bar">
+  <div class="breadcrumb-inner">
+    🏠 <a routerLink="/">Trang chủ</a> <span>›</span> <span class="bc-cur">Diễn đàn</span>
+  </div>
+</div>
+
+<div class="page-hero">
+  <div class="hero-blob"></div><div class="hero-blob2"></div>
+  <div class="page-hero-inner fade-up">
+    <div class="hero-left">
+      <div class="hero-badge"><div class="hero-badge-dot"></div>Cộng đồng học sinh lớn nhất Việt Nam</div>
+      <h1>Diễn Đàn <span>Học Tiếng Anh</span><br>Cùng Cộng Đồng</h1>
+      <p>Đặt câu hỏi, chia sẻ kinh nghiệm và học hỏi từ hàng nghìn bạn học sinh cùng ôn thi lớp 10. Được giải đáp bởi giáo viên & học sinh xuất sắc.</p>
+      <div class="hero-stats-row">
+        <div><div class="hs-num">5,000+</div><div class="hs-label">Thành viên</div></div>
+        <div><div class="hs-num">6,000+</div><div class="hs-label">Bài đăng</div></div>
+        <div><div class="hs-num">4,000+</div><div class="hs-label">Lượt trả lời</div></div>
+        <div><div class="hs-num">2,000</div><div class="hs-label">Đang online</div></div>
+      </div>
+    </div>
+    <div class="hero-post-box">
+      <div class="hpb-title">✍️ Đặt câu hỏi của bạn</div>
+      <input class="hpb-input" placeholder="Tiêu đề câu hỏi của bạn..." style="height:40px;margin-bottom:8px" />
+      <textarea class="hpb-input" placeholder="Mô tả chi tiết câu hỏi hoặc vấn đề bạn gặp phải..." rows="3" style="margin-bottom:0"></textarea>
+      <div class="hpb-cats">
+        <button *ngFor="let cat of postCategories" class="hpb-cat" [class.active]="selectedPostCategory === cat" (click)="setPostCategory(cat)">{{ cat }}</button>
+      </div>
+      <button class="hpb-btn">🚀 Đăng câu hỏi ngay</button>
+    </div>
+  </div>
+</div>
+
+<div class="page-main">
+  <div class="two-col-layout">
+    <aside class="sidebar">
+      <div class="sidebar-panel fade-up">
+        <div class="user-card">
+          <div class="user-avatar">{{ userAvatar }}</div>
+          <div class="user-name">{{ userName }}</div>
+          <div class="user-handle">{{ userHandle }} · Thành viên</div>
+          <div class="user-badges">
+            <span *ngFor="let badge of userBadges" class="u-badge" [ngClass]="'ub-' + badge.type">{{ badge.label }}</span>
+          </div>
+          <div class="user-stats">
+            <div *ngFor="let stat of userStats" class="us-item"><div class="us-num">{{ stat.number }}</div><div class="us-label">{{ stat.label }}</div></div>
+          </div>
+        </div>
+        <button class="btn-new-post">✏️ Đăng bài mới</button>
+      </div>
+
+      <div class="sidebar-panel fade-up d1">
+        <div class="panel-title">🔍 Tìm kiếm bài viết</div>
+        <div class="sidebar-search"><span style="color:var(--sky)">🔍</span><input type="text" placeholder="Tìm câu hỏi, chủ đề..." /></div>
+      </div>
+
+      <div class="sidebar-panel fade-up d1">
+        <div class="panel-title">📂 Chủ đề</div>
+        <ul class="sfl">
+          <li *ngFor="let cat of categoryList" class="sfl-item" [class.active]="activeCategory === 'all'" (click)="activeCategory = 'all'">
+            {{ cat.icon }} {{ cat.name }} <span class="sfl-count">{{ cat.threads }}+</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-panel fade-up d2">
+        <div class="panel-title">🟢 Đang online</div>
+        <div class="online-dots">
+          <div *ngFor="let user of onlineUsers; let i = index" class="online-dot" [style.background]="getAvatarGradient(i)" [title]="user.name">{{ user.emoji }}</div>
+        </div>
+        <div class="online-count"><span>320</span> thành viên đang trực tuyến</div>
+      </div>
+
+      <div class="sidebar-panel fade-up d2">
+        <div class="panel-title">🏷️ Tag phổ biến</div>
+        <div class="tags-cloud">
+          <span *ngFor="let tag of tagCloud" class="tag-pill">{{ tag }}</span>
+        </div>
+      </div>
+    </aside>
+
+    <div>
+      <div class="stats-banner fade-up">
+        <div *ngFor="let stat of statsData" class="stat-item">
+          <div class="stat-icon">{{ stat.icon }}</div>
+          <div class="stat-num">{{ stat.number }}<span *ngIf="stat.number.includes('k')" style="font-size:1.2rem"></span></div>
+          <div class="stat-label">{{ stat.label }}</div>
+        </div>
+      </div>
+
+      <div class="notice-banner fade-up">
+        <div class="notice-icon">📢</div>
+        <div class="notice-text">
+          <h4>Quy tắc diễn đàn – Hãy đọc trước khi đăng bài!</h4>
+          <p>Vui lòng đăng bài đúng chủ đề, không spam và tôn trọng các thành viên khác. Vi phạm sẽ bị khoá tài khoản.</p>
+        </div>
+        <button class="notice-btn">Xem quy tắc →</button>
+      </div>
+
+      <div class="section-title-row fade-up">
+        <h2 class="section-title">📂 Danh mục <span>thảo luận</span></h2>
+      </div>
+      <div class="forum-cats fade-up">
+        <div *ngFor="let cat of forumCategories" class="fcat-card">
+          <div class="fcat-icon">{{ cat.icon }}</div>
+          <div class="fcat-name">{{ cat.name }}</div>
+          <div class="fcat-count">{{ cat.count | number }} bài · {{ cat.replies | number }} trả lời</div>
+          <span class="fcat-badge" [ngClass]="cat.badgeColor">{{ cat.badge }}</span>
+        </div>
+      </div>
+
+      <div class="tab-bar fade-up">
+        <div *ngFor="let tab of tabs" class="tab" [class.active]="activeTab === tab" (click)="setActiveTab(tab)">{{ tab }}</div>
+      </div>
+
+      <div class="toolbar fade-up">
+        <div class="result-count">Tổng cộng <span>12,548</span> chủ đề thảo luận</div>
+        <select #sortSelect class="sort-select" (change)="setSortBy(sortSelect.value)">
+          <option *ngFor="let opt of sortOptions">{{ opt }}</option>
+        </select>
+      </div>
+
+      <div class="thread-list fade-up">
+        <div class="thread-header">
+          <span>Chủ đề thảo luận</span>
+          <span style="text-align:right">Trả lời / Lượt xem</span>
+        </div>
+
+        <div *ngFor="let thread of threadsList" class="thread-item" [class.pinned]="thread.isPinned" [class.hot]="thread.isHot">
+          <div class="thread-avatar" [style.background]="thread.avatarBg">{{ thread.avatar }}</div>
+          <div class="thread-body">
+            <div class="thread-top">
+              <span *ngFor="let badge of thread.badges" class="thread-badge" [ngClass]="getBadgeColor(badge)">
+                {{ getBadgeLabel(badge) }}
+              </span>
+              <span class="thread-cat">{{ thread.category }}</span>
+            </div>
+            <div class="thread-title">{{ thread.title }}</div>
+            <div class="thread-excerpt">{{ thread.excerpt }}</div>
+            <div class="thread-meta">
+              <span class="thread-author">{{ thread.author }}</span>
+              <span>{{ thread.date }}</span>
+              <span>{{ thread.tags }}</span>
+            </div>
+          </div>
+          <div class="thread-stats">
+            <div class="ts-replies">{{ thread.replies }}</div>
+            <div class="ts-label">trả lời</div>
+            <div class="ts-views"> {{ formatViews(thread.views) }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="pagination fade-up">
+        <button class="pg-btn">‹</button>
+        <button class="pg-btn active">1</button>
+        <button class="pg-btn">2</button>
+        <button class="pg-btn">3</button>
+        <button class="pg-btn">4</button>
+        <button class="pg-btn">5</button>
+        <span style="font-family:var(--font-head);font-size:.82rem;color:var(--gray-400);padding:0 4px">...</span>
+        <button class="pg-btn">420</button>
+        <button class="pg-btn">›</button>
+      </div>
+
+      <div class="section-title-row fade-up">
+        <h2 class="section-title">⚡ Hoạt động & <span>Bảng xếp hạng</span></h2>
+      </div>
+      <div class="two-cols fade-up">
+        <div>
+          <div class="sb-card" style="margin-bottom:0;box-shadow:var(--shadow);border-radius:var(--radius)">
+            <div style="font-family:var(--font-head);font-weight:800;font-size:.95rem;color:var(--gray-900);margin-bottom:14px;padding-bottom:12px;border-bottom:1.5px solid var(--sky-light)">🔔 Hoạt động gần đây</div>
+            <div class="activity-list">
+              <div *ngFor="let activity of activityList" class="act-item">
+                <div class="act-av" [style.background]="activity.avatarBg">{{ activity.avatar }}</div>
+                <div class="act-body">
+                  <div class="act-title">{{ activity.title }}</div>
+                  <div class="act-meta">{{ activity.userName }} {{ activity.action }}  {{ activity.time }}</div>
+                </div>
+                <span class="act-action" [ngClass]="getActivityActionClass(activity.actionType)">{{ getActivityActionLabel(activity.actionType) }}</span>
+              </div>
+            </div>
+            <a href="#" style="display:block;text-align:center;margin-top:16px;font-family:var(--font-head);font-size:.82rem;font-weight:700;color:var(--sky);text-decoration:none;padding-top:12px;border-top:1px solid var(--sky-light)">Xem tất cả hoạt động →</a>
+          </div>
+        </div>
+
+        <div>
+          <div class="sb-card">
+            <div style="font-family:var(--font-head);font-weight:800;font-size:.95rem;color:var(--gray-900);margin-bottom:4px">🏆 BXH thành viên tháng 3</div>
+            <ul class="lb-list" style="margin-top:14px">
+              <li *ngFor="let item of leaderboardList" class="lb-item">
+                <div class="lb-rank" [ngClass]="getRankClass(item.rank)">{{ getRankEmoji(item.rank) }}</div>
+                <div class="lb-av" [style.background]="getAvatarGradient(item.rank - 1)">{{ item.emoji }}</div>
+                <div class="lb-info">
+                  <div class="lb-name">{{ item.name }}</div>
+                  <div class="lb-sub">{{ item.meta }}</div>
+                </div>
+                <div class="lb-pts">{{ item.points | number }}</div>
+              </li>
+            </ul>
+            <a href="#" style="display:block;text-align:center;margin-top:12px;font-family:var(--font-head);font-size:.8rem;font-weight:700;color:var(--sky);text-decoration:none">Xem bảng xếp hạng đầy đủ →</a>
+          </div>
+
+          <div class="sb-card" style="margin-top:18px">
+            <div style="font-family:var(--font-head);font-weight:800;font-size:.88rem;color:var(--gray-900);margin-bottom:12px">📜 Quy tắc diễn đàn</div>
+            <div style="display:flex;flex-direction:column;gap:9px;font-size:.8rem;color:var(--gray-600)">
+              <div style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--accent2);font-weight:700;flex-shrink:0">✅</span>Đăng bài đúng chủ đề, có tiêu đề rõ ràng</div>
+              <div style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--accent2);font-weight:700;flex-shrink:0">✅</span>Tôn trọng và hỗ trợ các thành viên khác</div>
+              <div style="display:flex;align-items:flex-start;gap:8px"><span style="color:var(--accent2);font-weight:700;flex-shrink:0">✅</span>Không spam, không quảng cáo</div>
+              <div style="display:flex;align-items:flex-start;gap:8px"><span style="color:#ef4444;font-weight:700;flex-shrink:0">❌</span>Không đăng nội dung không liên quan</div>
+              <div style="display:flex;align-items:flex-start;gap:8px"><span style="color:#ef4444;font-weight:700;flex-shrink:0">❌</span>Không sao chép nội dung không có nguồn</div>
+            </div>
+            <a href="#" style="display:block;text-align:center;margin-top:12px;font-family:var(--font-head);font-size:.78rem;font-weight:700;color:var(--sky);text-decoration:none">Xem đầy đủ quy tắc →</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="cta-section fade-up">
+        <div style="font-size:3rem;margin-bottom:16px">💬</div>
+        <h2>Tham gia cộng đồng <span>5,000+ học sinh!</span></h2>
+        <p>Đăng ký miễn phí để đặt câu hỏi, nhận giải đáp từ giáo viên và học sinh xuất sắc, chia sẻ kinh nghiệm ôn thi lớp 10.</p>
+        <div class="cta-btns">
+          <button class="btn-cta-primary">🚀 Tham gia diễn đàn miễn phí</button>
+          <button class="btn-cta-outline">✏️ Đặt câu hỏi ngay</button>
+        </div>
+        <div style="margin-top:20px;font-size:.8rem;color:var(--gray-400)">✅ Miễn phí mãi mãi &nbsp;·&nbsp; ✅ Được giải đáp trong 24h &nbsp;·&nbsp; ✅ Cộng đồng thân thiện</div>
+      </div>
+    </div>
+  </div>
+</div>
